@@ -13,6 +13,7 @@ namespace STLcut
         public List<Triangle> TrArray;
         public string Filename;
         public int TriNum;
+        public BoundingBox BBox;
         public Model() {
             
             Filename = "";
@@ -24,6 +25,7 @@ namespace STLcut
             Filename = fn;
             TriNum = 0;
             LoadSTLBinnary(fn);
+            BBox = new BoundingBox(ref TrArray);
         }
 
         public void LoadSTLBinnary()
@@ -44,13 +46,19 @@ namespace STLcut
             {
                 MessageBox.Show("檔名或路徑錯誤! 無法開啟檔案!");
             }
-
+            
             var len = (int)stlFile.Length;
             var bits = new byte[len];
             stlFile.Read(bits, 0, len);
-                        
+
+            if (BitConverter.ToString(bits,0,5) == "solid")
+            {
+                MessageBox.Show("is ASCII!!");
+                return;
+            }
+
             TriNum = B2I32(bits[80], bits[81], bits[82], bits[83]);
-            //MessageBox.Show(len.ToString() + " " + TriNum.ToString());
+           
             TrArray = new List<Triangle>(TriNum + 1);
             const int triByte = 50;
             for (int i = 0; i < TriNum; i++)
@@ -72,8 +80,64 @@ namespace STLcut
 
             }
 
+            if(TriNum - TrArray.Count != 0 )
+            {
+                MessageBox.Show("讀檔錯誤: 網格數不合");
+                return;
+            }           
+
             return;
         }
+        public override string ToString()
+        {
+            string s = "";
+
+            foreach(Triangle T in TrArray)
+            {
+                s += T.ToString() + "\n";
+            }
+
+            return s;
+        }
+        
+        public List<Triangle> CrossTri(double face,int axis) //axis x=0 y =1 z =2
+        {
+            List<Triangle> TriCross = new List<Triangle>();
+
+            if(axis == 0) //X
+            {
+                foreach (Triangle T in TrArray)
+                {
+                    if(T.MinP.x < face && T.MaxP.x > face )
+                    {
+                        TriCross.Add(T);
+                    }
+                }
+            }
+            else if (axis == 1) //Y
+            {
+                foreach (Triangle T in TrArray)
+                {
+                    if (T.MinP.y < face && T.MaxP.y > face)
+                    {
+                        TriCross.Add(T);
+                    }
+                }
+            }
+            else //Z
+            {
+                foreach (Triangle T in TrArray)
+                {
+                    if (T.MinP.z < face && T.MaxP.z > face)
+                    {
+                        TriCross.Add(T);
+                    }
+                }
+            }               
+
+            return TriCross;
+        }
+
 
         private int B2I32(byte b1, byte b2, byte b3, byte b4)
         {
@@ -89,8 +153,6 @@ namespace STLcut
         }
     }
     
-    
-
     class Vector3D
     {
         public double x, y, z;
@@ -150,6 +212,15 @@ namespace STLcut
             return new Vector3D(x/length(), y / length(), z / length());
         }
 
+        public override string ToString()
+        {
+            string s = "";
+
+            s += x.ToString() + " " + y.ToString() + " " + z.ToString();
+
+            return s;
+        }
+
     }
 
     class Point3D
@@ -195,21 +266,113 @@ namespace STLcut
             return new Point3D(V.x, V.y, V.z);
         }
 
+        public override string ToString()
+        {
+            string s = "";
+
+            s += x.ToString() + " " + y.ToString() + " " + z.ToString();
+
+            return s;
+        }
+
     }
 
     class Triangle
     {
         public Vector3D n;
         public Point3D[] p = new Point3D[3];
+        public Point3D MaxP, MinP;
 
 
-        public Triangle() { }
+        //public Triangle() { }
         public Triangle(Point3D p1, Point3D p2, Point3D p3, Vector3D N)
         {
             p[0] = p1;
             p[1] = p2;
             p[2] = p3;
             n = N;
+
+            steMaxMin();
         }
+
+        public override string ToString()
+        {
+            string s = "";
+
+            s += "n: " + n.ToString() + "\n";
+            s += "p1: " + p[0].ToString() + "\n";
+            s += "p2: " + p[1].ToString() + "\n";
+            s += "p3: " + p[2].ToString();
+
+            return s;
+        }
+
+        public int CompareTo(Triangle comparePart)
+        {
+            // A null value means that this object is greater.
+            if (comparePart == null)
+                return 1;
+
+            else
+                return this.p[0].y.CompareTo(comparePart.p[0].y);
+        }
+        private void steMaxMin()
+        {
+            double maxX = Math.Max(Math.Max(p[0].x, p[1].x), p[2].x);
+            double maxY = Math.Max(Math.Max(p[0].y, p[1].y), p[2].y);
+            double maxZ = Math.Max(Math.Max(p[0].z, p[1].z), p[2].z);
+
+            double minX = Math.Min(Math.Min(p[0].x, p[1].x), p[2].x);
+            double minY = Math.Min(Math.Min(p[0].y, p[1].y), p[2].y);
+            double minZ = Math.Min(Math.Min(p[0].z, p[1].z), p[2].z);
+
+            MaxP = new Point3D(maxX, maxY, maxZ);
+            MinP = new Point3D(minX, minY, minZ);
+
+        }
+
+       
+    }
+
+    class BoundingBox
+    {
+        public Point3D MaxP, MinP;
+        public BoundingBox() { }
+        public BoundingBox(ref List<Triangle> Tri)
+        {
+            SetBoundingBox(ref Tri);
+        }
+        
+        public void SetBoundingBox(ref List<Triangle> Tri)
+        {
+            double MaxX = Double.MinValue, MaxY = Double.MinValue, MaxZ = Double.MinValue;
+            double MinX = Double.MinValue, MinY = Double.MinValue, MinZ = Double.MinValue;
+
+            foreach(Triangle T in Tri)
+            {
+                if (T.MaxP.x > MaxX)
+                    MaxX = T.MaxP.x;
+
+                if (T.MaxP.y > MaxY)
+                    MaxY = T.MaxP.y;
+
+                if (T.MaxP.z > MaxZ)
+                    MaxZ = T.MaxP.z;
+
+                
+                if (T.MinP.x > MinX)
+                    MinX = T.MinP.x;
+
+                if (T.MinP.y > MinY)
+                    MinY = T.MinP.y;
+
+                if (T.MinP.z > MinZ)
+                    MinZ = T.MinP.z;
+            }
+
+            MaxP = new Point3D(MaxX, MaxY, MaxZ);
+            MinP = new Point3D(MinX, MinY, MinZ);
+        }
+
     }
 }
