@@ -32,6 +32,9 @@
             this.LoadSTLbutton = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.FindCrossTri = new System.Windows.Forms.Button();
+            this.Layer = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.Cut = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -61,7 +64,7 @@
             // 
             // FindCrossTri
             // 
-            this.FindCrossTri.Location = new System.Drawing.Point(13, 67);
+            this.FindCrossTri.Location = new System.Drawing.Point(12, 41);
             this.FindCrossTri.Name = "FindCrossTri";
             this.FindCrossTri.Size = new System.Drawing.Size(125, 23);
             this.FindCrossTri.TabIndex = 2;
@@ -69,11 +72,39 @@
             this.FindCrossTri.UseVisualStyleBackColor = true;
             this.FindCrossTri.Click += new System.EventHandler(this.FindCrossTri_Click);
             // 
+            // Layer
+            // 
+            this.Layer.Location = new System.Drawing.Point(12, 138);
+            this.Layer.Name = "Layer";
+            this.Layer.Size = new System.Drawing.Size(126, 22);
+            this.Layer.TabIndex = 3;
+            this.Layer.Text = "10";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(12, 217);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(172, 22);
+            this.textBox2.TabIndex = 4;
+            // 
+            // Cut
+            // 
+            this.Cut.Location = new System.Drawing.Point(12, 70);
+            this.Cut.Name = "Cut";
+            this.Cut.Size = new System.Drawing.Size(125, 23);
+            this.Cut.TabIndex = 5;
+            this.Cut.Text = "Cut";
+            this.Cut.UseVisualStyleBackColor = true;
+            this.Cut.Click += new System.EventHandler(this.Cut_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(951, 558);
+            this.Controls.Add(this.Cut);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.Layer);
             this.Controls.Add(this.FindCrossTri);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.LoadSTLbutton);
@@ -81,6 +112,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -90,6 +122,9 @@
         private System.Windows.Forms.Button LoadSTLbutton;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button FindCrossTri;
+        private System.Windows.Forms.TextBox Layer;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Button Cut;
     }
 }
 

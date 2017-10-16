@@ -64,11 +64,11 @@ namespace STLcut
             for (int i = 0; i < TriNum; i++)
             {
                 int head = 84 + triByte * i;
-                float[] val = new float[12];
+                double[] val = new double[12];
 
                 for(int j = 0; j < 12; j++)
                 {
-                    val[j] = B2R32(bits[head + j * 4], bits[head + j * 4 + 1], bits[head + j * 4 + 2], bits[head + j * 4 + 3]);
+                    val[j] = B2R64(bits[head + j * 4], bits[head + j * 4 + 1], bits[head + j * 4 + 2], bits[head + j * 4 + 3]);
                 }
 
                 Vector3D n = new Vector3D(val[0], val[1], val[2]);
@@ -137,19 +137,18 @@ namespace STLcut
 
             return TriCross;
         }
-
-
+        
         private int B2I32(byte b1, byte b2, byte b3, byte b4)
         {
             byte[] B = { b1, b2, b3, b4 };
             return BitConverter.ToInt32(B, 0);
         }
-        private float B2R32(byte b1, byte b2, byte b3, byte b4)
+        private double B2R64(byte b1, byte b2, byte b3, byte b4)
         {
             byte[] B = { b1, b2, b3, b4 };
             //MessageBox.Show(B[0].ToString() + " " + B[1].ToString() + " " + B[2].ToString() + " " + B[3].ToString() + " ");
             //MessageBox.Show(BitConverter.ToSingle(B, 0).ToString());
-            return BitConverter.ToSingle(B, 0);
+            return (double)BitConverter.ToSingle(B, 0);
         }
     }
     
@@ -160,12 +159,6 @@ namespace STLcut
         public Vector3D(){}
 
         public Vector3D(double a, double b, double c)
-        {
-            x = a;
-            y = b;
-            z = c;
-        }
-        public Vector3D(float a, float b, float c)
         {
             x = a;
             y = b;
@@ -192,11 +185,11 @@ namespace STLcut
 
         public static double Dot(Vector3D va, Vector3D vb)
         {
-            return va.x * vb.x + va.y * vb.y + va.z * vb.z;
+            return (double)(va.x * vb.x + va.y * vb.y + va.z * vb.z);
         }
 		public static Vector3D Cross(Vector3D va, Vector3D vb)
         {
-            return new Vector3D( va.y * vb.z - vb.y * va.z, va.z * vb.x - vb.z * va.x, va.x * vb.y - vb.x * va.y);
+            return new Vector3D( (double)(va.y * vb.z - vb.y * va.z), (double)(va.z * vb.x - vb.z * va.x), (double)(va.x * vb.y - vb.x * va.y));
         }
         public static explicit operator Vector3D(Point3D P)
         {
@@ -236,13 +229,7 @@ namespace STLcut
             y = b;
             z = c;
         }
-        public Point3D(float a, float b, float c)
-        {
-            x = a;
-            y = b;
-            z = c;
-        }
-
+      
         public static Point3D operator +(Point3D v1, Point3D v2)
         {
             return new Point3D(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
@@ -375,4 +362,7 @@ namespace STLcut
         }
 
     }
+
+
+    
 }
