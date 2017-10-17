@@ -332,8 +332,8 @@ namespace STLcut
         
         public void SetBoundingBox(ref List<Triangle> Tri)
         {
-            double MaxX = Double.MinValue, MaxY = Double.MinValue, MaxZ = Double.MinValue;
-            double MinX = Double.MinValue, MinY = Double.MinValue, MinZ = Double.MinValue;
+            double MaxX = -Double.MaxValue, MaxY = -Double.MaxValue, MaxZ = -Double.MaxValue;
+            double MinX = Double.MaxValue, MinY = Double.MaxValue, MinZ = Double.MaxValue;
 
             foreach(Triangle T in Tri)
             {
@@ -347,13 +347,13 @@ namespace STLcut
                     MaxZ = T.MaxP.z;
 
                 
-                if (T.MinP.x > MinX)
+                if (T.MinP.x < MinX)
                     MinX = T.MinP.x;
 
-                if (T.MinP.y > MinY)
+                if (T.MinP.y < MinY)
                     MinY = T.MinP.y;
 
-                if (T.MinP.z > MinZ)
+                if (T.MinP.z < MinZ)
                     MinZ = T.MinP.z;
             }
 
