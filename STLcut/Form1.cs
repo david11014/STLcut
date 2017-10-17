@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 
 namespace STLcut
 {
@@ -33,15 +35,15 @@ namespace STLcut
         private void FindCrossTri_Click(object sender, EventArgs e)
         {
             CrossTri = M.CrossTri(Convert.ToDouble(Layer.Text), 1);
-
+            /*
             string s = "";
 
             foreach (Triangle T in CrossTri)
             {
                 s += T.ToString() + "\n";
-            }
+            }*/
 
-            richTextBox1.Text += s;
+            richTextBox1.Text += "cross Tri.: " + CrossTri.Count.ToString() + "\n";
 
         }
 
@@ -61,10 +63,21 @@ namespace STLcut
                     Point3D CP = new Point3D();
 
                     if (IsTouch(source, new Vector3D(0, 0, 1), T, ref CP))
+                    {
+                        richTextBox1.Text += IsTouch(source, new Vector3D(0, 0, 1), T, ref CP).ToString() + "\n" ;
                         crossP.Add(CP);
+                    }
+                        
                 }
+
             }
 
+            string s = "";
+            foreach (Point3D P in crossP)
+            {
+                s += P.ToString() + "\n";
+            }
+            richTextBox1.Text += s;
         }
 
         private bool IsTouch(Point3D source, Vector3D ray, Triangle T,ref Point3D CP)
